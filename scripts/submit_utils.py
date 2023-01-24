@@ -2,17 +2,15 @@ from typing import Any, Dict, List, Tuple
 
 import itertools
 import os
-from os.path import dirname
-from os.path import join as oj
 import random
 from functools import reduce
+"""Handles utilities for submission.
+This file probably does not need to be edited.
+"""
 
-repo_dir = dirname(dirname(os.path.abspath(__file__)))
 
-
-def run_dicts(
-    params_shared_dict: Dict[str, List] = {},
-    params_coupled_dict: Dict[Tuple[str], List[Tuple]] = {},
+def run_args_list(
+    args_list: List[Dict[str, Any]],
     cmd_python: str = 'python',
     script_name: str = '02_train_suffix.py',
     actually_run: bool = True,
@@ -22,10 +20,7 @@ def run_dicts(
     """
     Params
     ------
-    ks_final: List[str]
-        List of keys being passed to the script
-    param_combos_final: List[Tuple]
-        List of tuples of values, each tuple having the same length as ks_final
+    run_args_list
     cmd_python: str
         Command to run python
     script_name: str
@@ -37,10 +32,6 @@ def run_dicts(
     reverse: bool
         Whether to reverse the order of the script calls
     """
-    # get params
-    _validate_arguments(params_shared_dict, params_coupled_dict)
-    args_list = combine_param_dicts(params_shared_dict, params_coupled_dict)
-
     # adjust order
     if shuffle:
         random.shuffle(args_list)
@@ -49,8 +40,7 @@ def run_dicts(
 
     # loop over function calls
     for i in range(len(args_list)):
-        param_str = cmd_python + ' ' + \
-            os.path.join(repo_dir, script_name + ' ')
+        param_str = cmd_python + ' ' + script_name + ' '
         for k, v in args_list[i].items():
             if isinstance(v, list):
                 param_str += '--' + k + ' ' + ' '.join(v) + ' '
@@ -63,6 +53,44 @@ def run_dicts(
                 os.system(param_str)
         except Exception as e:
             print(e)
+
+
+def get_args_list(
+    params_shared_dict: Dict[str, List],
+    params_coupled_dict: Dict[Tuple[str], List[Tuple]],
+) -> List[Dict[str, Any]]:
+    _validate_arguments(params_shared_dict, params_coupled_dict)
+
+    def combos_collapse(l: List[List[Dict]]) -> List[Dict]:
+        # get param combos as List[Tuple[Dict]] then convert to List[Dict]
+        return [
+            # convert List[Dict[Tuple]] -> List[Dict]
+            reduce(lambda a, b: {**a, **b}, dict_tup)
+            # get param combos as List[Tuple[Dict]]
+            for dict_tup in list(itertools.product(*l))
+        ]
+
+    # Shared params as List[List[Dict]]
+    shared_combos_dict_list = combos_collapse(
+        [[{k: v} for v in params_shared_dict[k]]
+         for k in params_shared_dict.keys()]
+    )
+
+    # Coupled params as List[List[Dict]]]
+    coupled_combos_dict_list = [[
+        {k_tup[x]: v[i][x] for x in range(len(k_tup))}
+        for i in range(len(v))]
+        for k_tup, v in params_coupled_dict.items()
+    ]
+
+    # Combine each coupled List[Dict] with the shared List[Dict]
+    combined_combos_dict_list = [
+        combos_collapse(
+            [coupled_combos_dict_list[i], shared_combos_dict_list])
+        for i in range(len(coupled_combos_dict_list))
+    ]
+    args_list = sum(combined_combos_dict_list, [])
+    return args_list
 
 
 def _validate_arguments(
@@ -85,48 +113,3 @@ def _validate_arguments(
             k_tup) == x for x in v_tup_list], f"params_coupled_dict k and v must have same length but got {len(k_tup)} and {len(v_tup_list)} for {k_tup} and {v_tup_list} respectively"
         for k in k_tup:
             assert not k in params_shared_dict, f"params_coupled_dict key {k} should not be in params_shared_dict"
-
-
-def combine_param_dicts(
-    params_shared_dict: Dict[str, List],
-    params_coupled_dict: Dict[Tuple[str], List[Tuple]],
-) -> List[Dict[str, Any]]:
-    """
-    Returns
-    -------
-    ks_final: List[str]
-        List of keys being passed to the script
-    param_combos_final: List[Tuple]
-        List of tuples of values, each tuple having the same length as ks_final
-    """
-    def combos_collapse(l: List[List[Dict]]) -> List[Dict]:
-            # get param combos as List[Tuple[Dict]] then convert to List[Dict]
-            return [
-                # convert List[Dict[Tuple]] -> List[Dict]
-                reduce(lambda a, b: {**a, **b}, dict_tup)
-                # get param combos as List[Tuple[Dict]]
-                for dict_tup in list(itertools.product(*l))
-            ]
-
-    # Shared params as List[List[Dict]]
-    shared_combos_dict_list = combos_collapse(
-        [[{k: v} for v in params_shared_dict[k]]
-        for k in params_shared_dict.keys()]
-    )
-
-    # Coupled params as List[List[Dict]]]
-    coupled_combos_dict_list = [[
-        {k_tup[x]: v[i][x] for x in range(len(k_tup))}
-        for i in range(len(v))]
-        for k_tup, v in params_coupled_dict.items()
-    ]
-
-    # Combine each coupled List[Dict] with the shared List[Dict]
-    combined_combos_dict_list = [
-        combos_collapse(
-        [coupled_combos_dict_list[i], shared_combos_dict_list])
-        for i in range(len(coupled_combos_dict_list))
-    ]
-    args_list = sum(combined_combos_dict_list, [])
-    return args_list
-
