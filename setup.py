@@ -7,14 +7,14 @@ with open(path.join(path_to_repo, 'readme.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 required_pypi = [
-    'transformers[torch]',
-    'torch',
-    'datasets',
     'numpy',
     'scikit-learn',
     'pandas',
-    'scipy',
-    'dict_hash'
+    'tqdm',
+    'dict_hash', # required for caching
+
+    'datasets', # optional, required for getting NLP datasets
+    'imodels', # optional, required for getting tabular datasets / interpretable modeling
 ]
 
 setuptools.setup(
@@ -29,7 +29,6 @@ setuptools.setup(
     packages=setuptools.find_packages(
         exclude=['tests', 'tests.*', '*.test.*']
     ),
-    # install_requires=required_pypi,
     python_requires='>=3.6',
     classifiers=[
         "Programming Language :: Python :: 3",

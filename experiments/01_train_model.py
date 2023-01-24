@@ -5,8 +5,10 @@ import random
 from collections import defaultdict
 from os.path import join
 import numpy as np
+from sklearn.model_selection import train_test_split
 import torch
 import pickle as pkl
+import imodels
 
 import project_name.model
 import cache_save_utils
@@ -87,11 +89,18 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     random.seed(args.seed)
 
-    # load data
+    # load text data
     dset, dataset_key_text = data.load_huggingface_dataset(
         dataset_name=args.dataset_name, subsample_frac=args.subsample_frac)
-    X_train, X_cv, X_test, y_train, y_cv, y_test, feature_names = data.convert_text_data_to_counts_array(
-        dset, dataset_key_text)
+    X_train, X_test, y_train, y_test, feature_names = data.convert_text_data_to_counts_array(
+        dset, dataset_key_text)    
+
+    # load tabular data
+    # https://csinva.io/imodels/util/data_util.html#imodels.util.data_util.get_clean_dataset
+    # X_train, X_test, y_train, y_test, feature_names = imodels.get_clean_dataset('compas_two_year_clean', data_source='imodels', test_size=0.33)
+
+
+    X_train, X_cv, y_train, y_cv = train_test_split(X_train, y_train, test_size=0.33, random_state=args.seed)    
 
     # load model
     model = project_name.model.get_model(args)

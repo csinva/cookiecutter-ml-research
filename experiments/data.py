@@ -1,9 +1,4 @@
 import datasets
-import os
-from os.path import join as oj
-from tqdm import tqdm
-import pandas as pd
-import pickle as pkl
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
@@ -47,5 +42,4 @@ def convert_text_data_to_counts_array(dset, dataset_key_text):
     X_test = v.transform(dset['validation'][dataset_key_text])
     y_test = dset['validation']['label']
     feature_names = v.get_feature_names_out().tolist()
-    X_train, X_cv, y_train, y_cv = train_test_split(X_train, y_train, test_size=0.33, random_state=13)
-    return X_train, X_cv, X_test, y_train, y_cv, y_test, feature_names
+    return X_train, X_test, y_train, y_test, feature_names

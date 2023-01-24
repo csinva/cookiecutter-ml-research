@@ -140,3 +140,4 @@ results
 **workspace
 slurm_files/
 slurm_files_out/
+scripts/data/
