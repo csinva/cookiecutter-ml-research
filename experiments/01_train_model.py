@@ -20,9 +20,11 @@ def fit_model(model, X_train, y_train, X_test, y_test, feature_names, r):
 
     return r
 
+
 def evaluate_model(model, X_test, y_test, r):
     r['test_acc'] = model.score(X_test, y_test)
     return r
+
 
 if __name__ == '__main__':
     # initialize args
@@ -42,6 +44,10 @@ if __name__ == '__main__':
                             help='random seed')
         parser.add_argument('--save_dir', type=str, default='tmp',
                             help='directory for saving')
+
+        # model args
+        parser.add_argument('--model_name', type=str, choices=['decision_tree', 'ridge'],
+                            default='decision_tree', help='name of model')
         return parser
 
     def add_computational_args(parser):
@@ -64,7 +70,7 @@ if __name__ == '__main__':
     for k in sorted(vars(args)):
         logger.info('\t' + k + ' ' + str(vars(args)[k]))
 
-    # set up saving directory
+    # set up saving directory + check for cache
     already_cached, save_dir = cache_save_utils.get_save_dir_unique(
         parser, parser_without_computational_args, args, args.save_dir)
     logging.info(f'\n\nsaving to ' + save_dir)
@@ -81,18 +87,19 @@ if __name__ == '__main__':
     # load data
     dset, dataset_key_text = data.load_dataset(
         dataset_name=args.dataset_name, subsample_frac=args.subsample_frac)
-    X_train, y_train, X_test, y_test, feature_names = data.convert_text_data_to_counts_array(dset, dataset_key_text)
+    X_train, y_train, X_test, y_test, feature_names = data.convert_text_data_to_counts_array(
+        dset, dataset_key_text)
 
     # load model
     model = DecisionTreeClassifier()
 
-    # set up saving
+    # set up saving dictionary + save params file
     r = defaultdict(list)
     r.update(vars(args))
     cache_save_utils.save_json(
         args=args, save_dir=save_dir, fname='params.json', r=r)
 
-    # train
+    # fit
     r = fit_model(model, X_train, y_train, X_test, y_test, feature_names, r)
 
     # save results

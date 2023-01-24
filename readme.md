@@ -25,6 +25,7 @@ This is an evolving repo optimized for machine-learning projects aimed at design
 - Paths should be specified relative to a file's location (e.g. `os.path.join(os.path.dirname(__file__), 'data')`)
 - Use logging instead of print
 - Use argparse and sweep over hyperparams using python scripts (or [amulet](https://amulet-docs.azurewebsites.net/main/index.html))
+    - Note, arguments get passed as strings so shouldn't pass args that aren't primitives or a list of primitives (more complex structures should be handled in the experiments code)
 - Each run should save a single pickle file of its results
 - Everything should run end-to-end with one script (caching things along the way)
 - Keep an updated requirements.txt (required for amulet)

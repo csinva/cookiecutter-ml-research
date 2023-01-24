@@ -1,137 +1,132 @@
-from typing import Dict, List
+from typing import Any, Dict, List, Tuple
 
 import itertools
 import os
 from os.path import dirname
 from os.path import join as oj
-import sys
-import tempfile
 import random
-
+from functools import reduce
 
 repo_dir = dirname(dirname(os.path.abspath(__file__)))
-# SAVE_DIR = '/home/chansingh/mntv1/'
-SAVE_DIR = f'/home/chansingh/mntv1/iprompt_revision_xmas/'
-NUM_LEARNED_TOKENS = [6]
-SEEDS = [1, 2, 3]
-JOB_SUFFIX = 'long_suffs'
-iprompt_criterion = ['loss'] # 'loss', 'acc'
-# iprompt_criterion = ['acc'] # 'loss', 'acc'
-PARAMS_COUPLED_DICT = {  # these batch_sizes are roughly set for an A100 80GB gpu
-    ('checkpoint', 'batch_size', 'float16'): [
-        # ('gpt2', 32, 0),
-        # ('gpt2-medium', 200, 0),
-        # ('gpt2-large', 100, 0),
-        # ('gpt2-xl', 32, 0),
-        # ('EleutherAI/gpt-neo-2.7B', 16, 0),
-        # ('EleutherAI/gpt-j-6B', 64, 1),
-        # ('EleutherAI/gpt-j-6B', 16, 1),
-        # ('EleutherAI/gpt-neox-20b', 1, 0),
-        # ("facebook/galactica-6.7b", 64, 0), # which language model to use
-        # ("facebook/galactica-6.7b", 64, 1), # which language model to use
-        ('google/flan-t5-xl', 1, 0),
-        # ('google/flan-t5-xxl', 1, 1)
-    ],
-}
-NUM_LEARNED_TOKENS = [6]
-SEEDS = [1, 2, 3]
-
-def combine_param_dicts(PARAMS_SHARED_DICT, PARAMS_COUPLED_DICT):
-    # shared
-    ks_shared = list(PARAMS_SHARED_DICT.keys())
-    vals_shared = [PARAMS_SHARED_DICT[k] for k in ks_shared]
-    for val in vals_shared:
-        assert isinstance(
-            val, list), f"param val {val} must be type list, got type {type(val)}"
-    param_tuples_list_shared = list(
-        itertools.product(*vals_shared))
-
-    # coupled
-    ks_coupled = list(PARAMS_COUPLED_DICT.keys())
-    vals_coupled = [PARAMS_COUPLED_DICT[k] for k in ks_coupled]
-    param_tuples_list_coupled = list(
-        itertools.product(*vals_coupled))
-    param_tuples_list_coupled_flattened = [
-        sum(x, ()) for x in param_tuples_list_coupled]
-
-    # final
-    ks_final = ks_shared + list(sum(ks_coupled, ()))
-
-    param_combos_final = [shared + combo
-                          for shared in param_tuples_list_shared
-                          for combo in param_tuples_list_coupled_flattened]
-    return ks_final, param_combos_final
-
-
-def run_command_bash(cmd: str) -> None:
-    os.system(cmd)
-
-
-def run_command_slurm(
-    python_cmd: str,
-    save_dir: str,
-    gpu_str: str,
-    mem_str: str = '32G',
-    num_cpus: int = 1,
-) -> None:
-    dir_path = dirname(os.path.realpath(__file__))
-    slurm_template_file = open(oj(dir_path, 'slurm_template.slurm'))
-    new_slurm_file_text = slurm_template_file.read().format(
-        save_dir=save_dir,
-        job_name='interpretable-autoprompting',
-        gpu=gpu_str,
-        mem=mem_str,
-        num_cpus=str(num_cpus),
-        python_cmd=python_cmd
-    )
-    tmp_slurm_file = tempfile.NamedTemporaryFile(
-        dir=save_dir, suffix=".tmp", delete=False
-    )
-    tmp_slurm_file.write((new_slurm_file_text + '\n').encode())
-    tmp_slurm_file.close()
-    # will block until slurm processes file.
-    run_command_bash(f'sbatch {tmp_slurm_file.name}')
-    print(
-        f'launched slurm command, removing temporary file {tmp_slurm_file.name}')
-    os.remove(tmp_slurm_file.name)
 
 
 def run_dicts(
-    ks_final: List,
-    param_combos_final: List,
+    params_shared_dict: Dict[str, List] = {},
+    params_coupled_dict: Dict[Tuple[str], List[Tuple]] = {},
     cmd_python: str = 'python',
     script_name: str = '02_train_suffix.py',
     actually_run: bool = True,
-    use_slurm: bool = False,
     shuffle: bool = False,
     reverse: bool = False,
-    slurm_gpu_str: str = 'gpu:1',
-    save_dir: str = '',
 ):
+    """
+    Params
+    ------
+    ks_final: List[str]
+        List of keys being passed to the script
+    param_combos_final: List[Tuple]
+        List of tuples of values, each tuple having the same length as ks_final
+    cmd_python: str
+        Command to run python
+    script_name: str
+        Name of script to run
+    actually_run: bool
+        Whether to actually run the script (otherwise just print the command)
+    shuffle: bool
+        Whether to shuffle the order of the script calls
+    reverse: bool
+        Whether to reverse the order of the script calls
+    """
+    # get params
+    _validate_arguments(params_shared_dict, params_coupled_dict)
+    args_list = combine_param_dicts(params_shared_dict, params_coupled_dict)
+
+    # adjust order
     if shuffle:
-        random.shuffle(param_combos_final)
+        random.shuffle(args_list)
     if reverse:
-        param_combos_final = param_combos_final[::-1]
-    for i in range(len(param_combos_final)):
+        args_list = args_list[::-1]
+
+    # loop over function calls
+    for i in range(len(args_list)):
         param_str = cmd_python + ' ' + \
             os.path.join(repo_dir, script_name + ' ')
-        for j, key in enumerate(ks_final):
-            param_val = param_combos_final[i][j]
-            if isinstance(param_val, list):
-                param_str += '--' + key + ' ' + ' '.join(param_val) + ' '
+        for k, v in args_list[i].items():
+            if isinstance(v, list):
+                param_str += '--' + k + ' ' + ' '.join(v) + ' '
             else:
-                param_str += '--' + key + ' ' + str(param_val) + ' '
+                param_str += '--' + k + ' ' + str(v) + ' '
         print(
-            f'\n\n-------------------{i + 1}/{len(param_combos_final)}--------------------\n', param_str)
+            f'\n\n-------------------{i + 1}/{len(args_list)}--------------------\n', param_str)
         try:
             if actually_run:
-                if use_slurm:
-                    run_command_slurm(
-                        python_cmd=param_str,
-                        gpu_str=slurm_gpu_str,
-                        save_dir=save_dir
-                    )
-                else:
-                    run_command_bash(param_str)
+                os.system(param_str)
         except Exception as e:
             print(e)
+
+
+def _validate_arguments(
+    params_shared_dict: Dict[str, List],
+    params_coupled_dict: Dict[Tuple[str], List[Tuple]],
+):
+    for k, v in params_shared_dict.items():
+        assert isinstance(
+            k, str), f"params_shared_dict key {k} must be type list, got type {type(k)}"
+        assert isinstance(
+            v, list), f"params_shared_dict val {v} must be type list, got type {type(v)}"
+    for k_tup, v_tup_list in params_coupled_dict.items():
+        assert isinstance(
+            k_tup, tuple), f"params_coupled_dict key {k_tup} must be type tuple, got type {type(k_tup)}"
+        assert isinstance(
+            v_tup_list, list), f"params_coupled_dict val {v_tup_list} must be type list, got type {type(v_tup_list)}"
+        assert all([isinstance(x, str) for x in k_tup]
+                   ), f"params_coupled_dict k {k_tup} must only contain strings"
+        assert [len(
+            k_tup) == x for x in v_tup_list], f"params_coupled_dict k and v must have same length but got {len(k_tup)} and {len(v_tup_list)} for {k_tup} and {v_tup_list} respectively"
+        for k in k_tup:
+            assert not k in params_shared_dict, f"params_coupled_dict key {k} should not be in params_shared_dict"
+
+
+def combine_param_dicts(
+    params_shared_dict: Dict[str, List],
+    params_coupled_dict: Dict[Tuple[str], List[Tuple]],
+) -> List[Dict[str, Any]]:
+    """
+    Returns
+    -------
+    ks_final: List[str]
+        List of keys being passed to the script
+    param_combos_final: List[Tuple]
+        List of tuples of values, each tuple having the same length as ks_final
+    """
+    def combos_collapse(l: List[List[Dict]]) -> List[Dict]:
+            # get param combos as List[Tuple[Dict]] then convert to List[Dict]
+            return [
+                # convert List[Dict[Tuple]] -> List[Dict]
+                reduce(lambda a, b: {**a, **b}, dict_tup)
+                # get param combos as List[Tuple[Dict]]
+                for dict_tup in list(itertools.product(*l))
+            ]
+
+    # Shared params as List[List[Dict]]
+    shared_combos_dict_list = combos_collapse(
+        [[{k: v} for v in params_shared_dict[k]]
+        for k in params_shared_dict.keys()]
+    )
+
+    # Coupled params as List[List[Dict]]]
+    coupled_combos_dict_list = [[
+        {k_tup[x]: v[i][x] for x in range(len(k_tup))}
+        for i in range(len(v))]
+        for k_tup, v in params_coupled_dict.items()
+    ]
+
+    # Combine each coupled List[Dict] with the shared List[Dict]
+    combined_combos_dict_list = [
+        combos_collapse(
+        [coupled_combos_dict_list[i], shared_combos_dict_list])
+        for i in range(len(coupled_combos_dict_list))
+    ]
+    args_list = sum(combined_combos_dict_list, [])
+    return args_list
+
