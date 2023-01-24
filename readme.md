@@ -5,6 +5,7 @@ This is an evolving repo optimized for machine-learning projects aimed at design
 - `experiments`: code for runnning experiments (e.g. loading data, training models, evaluating models)
 - `scripts`: scripts for running experiments (e.g. python scripts that launch jobs in `experiments` folder with different hyperparams)
 - `notebooks`: jupyter notebooks for analyzing results and making figures
+- `tests`: unit tests
 
 # Setup
 - first, rename `project_name` to your project name and modify `setup.py` accordingly
