@@ -81,7 +81,7 @@ if __name__ == '__main__':
         exit(0)
     for k in sorted(vars(args)):
         logger.info('\t' + k + ' ' + str(vars(args)[k]))
-    logging.info(f'\n\nsaving to ' + save_dir)
+    logging.info(f'\n\n\tsaving to ' + save_dir + '\n')
 
     # set seed
     np.random.seed(args.seed)
