@@ -6,7 +6,6 @@ from collections import defaultdict
 from os.path import join
 import numpy as np
 from sklearn.model_selection import train_test_split
-import torch
 import pickle as pkl
 import imodels
 
@@ -86,8 +85,8 @@ if __name__ == '__main__':
 
     # set seed
     np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
     random.seed(args.seed)
+    # torch.manual_seed(args.seed)
 
     # load text data
     dset, dataset_key_text = data.load_huggingface_dataset(
