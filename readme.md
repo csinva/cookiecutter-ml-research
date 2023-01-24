@@ -11,6 +11,7 @@ This is an evolving repo optimized for machine-learning projects aimed at design
 - clone and run `pip install -e .`, resulting in a package named `project_name` that can be imported
     - see `setup.py` for dependencies, not all are required
 - example run: run `python scripts/01_train_models.py` (which calls `experiments/01_train_model.py` then view the results in `notebooks/01_model_results.ipynb`
+- keep tests upated and run using `pytest`
 
 # Features
 - scripts sweep over hyperparameters using easy-to-specify python code
