@@ -15,6 +15,7 @@ required_pypi = [
 
     'datasets', # optional, required for getting NLP datasets
     'imodels', # optional, required for getting tabular datasets / interpretable modeling
+    'pytest', # optional, required for running tests
 ]
 
 setuptools.setup(

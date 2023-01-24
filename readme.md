@@ -25,10 +25,10 @@ This is an evolving repo optimized for machine-learning projects aimed at design
 - Naming variables: use the main thing first followed by the modifiers (e.g. `X_train`, `acc_test`)
     - binary arguments should start with the word "use" (e.g. `--use_caching`) and take values 0 or 1
 - Use logging instead of print
-- Use argparse and sweep over hyperparams using python scripts (or [amulet](https://amulet-docs.azurewebsites.net/main/index.html))
+- Use argparse and sweep over hyperparams using python scripts (or custom things, like [amulet](https://amulet-docs.azurewebsites.net/main/index.html))
     - Note, arguments get passed as strings so shouldn't pass args that aren't primitives or a list of primitives (more complex structures should be handled in the experiments code)
 - Each run should save a single pickle file of its results
 - All experiments that depend on each other should run end-to-end with one script (caching things along the way)
-- Keep an updated requirements.txt (required for amulet)
+- Keep updated requirements in setup.py
 - Follow sklearn apis whenever possible
 - Use Huggingface whenever possible, then pytorch
