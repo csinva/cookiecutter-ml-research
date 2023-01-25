@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 
 def load_huggingface_dataset(dataset_name, subsample_frac=1.0):
-    """Load text dataset from huggingface (with train/vlidation spltis) + return the relevant dataset key
+    """Load text dataset from huggingface (with train/validation spltis) + return the relevant dataset key
     """
     # load dset
     if dataset_name == 'tweet_eval':

@@ -5,23 +5,38 @@ import random
 from collections import defaultdict
 from os.path import join
 import numpy as np
+from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 import pickle as pkl
 import imodels
+import inspect
 
 import project_name.model
 import cache_save_utils
 import data
 
 
-def fit_model(model, X_train, X_cv, X_test, y_train, y_cv, y_test, feature_names, r):
-    model.fit(X_train, y_train)
-    r['acc_cv'] = model.score(X_cv, y_cv)
-    evaluate_model(model, X_test, y_test, r)
-    return r
+def fit_model(model, X_train, y_train, feature_names, r):
+    # fit the model
+    fit_parameters = inspect.signature(model.fit).parameters.keys()
+    if 'feature_names' in fit_parameters and feature_names is not None:
+        model.fit(X_train, y_train, feature_names=feature_names)
+    else:
+        model.fit(X_train, y_train)
 
-def evaluate_model(model, X_test, y_test, r):
-    r['acc_test'] = model.score(X_test, y_test)
+    return r, model
+
+def evaluate_model(model, X_train, X_cv, X_test, y_train, y_cv, y_test, r):
+    """Evaluate model performance on each split
+    """
+    metrics = {
+        'accuracy': accuracy_score,
+    }
+    for split_name, (X_, y_) in zip(['train', 'cv', 'test'], [(X_train, y_train), (X_cv, y_cv), (X_test, y_test)]):
+        y_pred_ = model.predict(X_)
+        for metric_name, metric_fn in metrics.items():
+            r[f'{metric_name}_{split_name}'] = metric_fn(y_, y_pred_)
+        
     return r
 
 
@@ -72,7 +87,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
 
     # set up saving directory + check for cache
-    already_cached, save_dir = cache_save_utils.get_save_dir_unique(
+    already_cached, save_dir_unique = cache_save_utils.get_save_dir_unique(
         parser, parser_without_computational_args, args, args.save_dir)
     
     if args.use_cache and already_cached:
@@ -81,7 +96,7 @@ if __name__ == '__main__':
         exit(0)
     for k in sorted(vars(args)):
         logger.info('\t' + k + ' ' + str(vars(args)[k]))
-    logging.info(f'\n\n\tsaving to ' + save_dir + '\n')
+    logging.info(f'\n\n\tsaving to ' + save_dir_unique + '\n')
 
     # set seed
     np.random.seed(args.seed)
@@ -107,12 +122,17 @@ if __name__ == '__main__':
     # set up saving dictionary + save params file
     r = defaultdict(list)
     r.update(vars(args))
+    r['save_dir_unique'] = save_dir_unique
     cache_save_utils.save_json(
-        args=args, save_dir=save_dir, fname='params.json', r=r)
+        args=args, save_dir=save_dir_unique, fname='params.json', r=r)
 
     # fit
-    r = fit_model(model, X_train, X_cv, X_test, y_train, y_cv, y_test, feature_names, r)
+    r, model = fit_model(model, X_train, y_train, feature_names, r)
+    
+    # evaluate
+    r = evaluate_model(model, X_train, X_cv, X_test, y_train, y_cv, y_test, r)
 
     # save results
-    pkl.dump(r, open(join(save_dir, 'results.pkl'), 'wb'))
+    pkl.dump(r, open(join(save_dir_unique, 'results.pkl'), 'wb'))
+    pkl.dump(model, open(join(save_dir_unique, 'model.pkl'), 'wb'))
     logging.info('Succesfully completed :)\n\n')
