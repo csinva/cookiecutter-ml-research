@@ -130,9 +130,8 @@ dmypy.json
 
 **cache*
 **.pkl
-results
+results/
 **.pyc
-**.ipynb
 **.png
 .autoprompt
 .vscode
