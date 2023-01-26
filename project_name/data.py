@@ -30,9 +30,13 @@ def load_huggingface_dataset(dataset_name, subsample_frac=1.0):
         del dset['unsupervised']
         dset['validation'] = dset['test']
 
-    # subsample data
+    # subsample datak
     if subsample_frac > 0:
-        dset['train'] = dset['train'].select(range(int(subsample_frac * len(dset['train']))))
+        n = len(dset['train'])
+        dset['train'] = dset['train'].select(np.random.choice(
+            range(n), replace=False,
+            size=int(n * subsample_frac)
+        ))
     return dset, dataset_key_text
 
 def convert_text_data_to_counts_array(dset, dataset_key_text):
