@@ -12,8 +12,8 @@ import imodels
 import inspect
 
 import project_name.model
+import project_name.data
 import cache_save_utils
-import data
 
 
 def fit_model(model, X_train, y_train, feature_names, r):
@@ -103,9 +103,9 @@ if __name__ == '__main__':
     # torch.manual_seed(args.seed)
 
     # load text data
-    dset, dataset_key_text = data.load_huggingface_dataset(
+    dset, dataset_key_text = project_name.data.load_huggingface_dataset(
         dataset_name=args.dataset_name, subsample_frac=args.subsample_frac)
-    X_train, X_test, y_train, y_test, feature_names = data.convert_text_data_to_counts_array(
+    X_train, X_test, y_train, y_test, feature_names = project_name.data.convert_text_data_to_counts_array(
         dset, dataset_key_text)    
 
     # load tabular data
