@@ -82,6 +82,8 @@ def get_args_list(
         for i in range(len(v))]
         for k_tup, v in params_coupled_dict.items()
     ]
+    if coupled_combos_dict_list == []:
+        return shared_combos_dict_list
 
     # Combine each coupled List[Dict] with the shared List[Dict]
     combined_combos_dict_list = [
@@ -113,3 +115,4 @@ def _validate_arguments(
             k_tup) == x for x in v_tup_list], f"params_coupled_dict k and v must have same length but got {len(k_tup)} and {len(v_tup_list)} for {k_tup} and {v_tup_list} respectively"
         for k in k_tup:
             assert not k in params_shared_dict, f"params_coupled_dict key {k} should not be in params_shared_dict"
+
