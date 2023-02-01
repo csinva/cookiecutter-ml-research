@@ -1,10 +1,10 @@
 from typing import Any, Dict, List, Tuple
 
 import itertools
-import os
+import subprocess
 import random
 from functools import reduce
-"""Handles utilities for submission.
+"""Handles utilities for job sweeps.
 This file probably does not need to be edited.
 """
 
@@ -50,7 +50,11 @@ def run_args_list(
             f'\n\n-------------------{i + 1}/{len(args_list)}--------------------\n', param_str)
         try:
             if actually_run:
-                os.system(param_str)
+                # os.system(param_str)
+                sts = subprocess.Popen(param_str, shell=True).wait()
+        except KeyboardInterrupt:
+            print('Keyboard interrupt, exiting...')
+            exit(0)
         except Exception as e:
             print(e)
 
@@ -115,4 +119,5 @@ def _validate_arguments(
             k_tup) == x for x in v_tup_list], f"params_coupled_dict k and v must have same length but got {len(k_tup)} and {len(v_tup_list)} for {k_tup} and {v_tup_list} respectively"
         for k in k_tup:
             assert not k in params_shared_dict, f"params_coupled_dict key {k} should not be in params_shared_dict"
+
 
