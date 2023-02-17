@@ -14,6 +14,7 @@ params_shared_dict = {
 }
 
 # List of tuples to sweep over (these values are coupled, and swept over together)
+# Note: this is a dictionary so you shouldn't have repeated keys
 params_coupled_dict = {
     ('model_name', 'alpha'): [
         ('ridge', 0.1),
