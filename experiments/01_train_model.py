@@ -7,7 +7,7 @@ from os.path import join
 import numpy as np
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.model_selection import train_test_split
-import pickle as pkl
+import joblib
 import imodels
 import inspect
 
@@ -132,6 +132,6 @@ if __name__ == '__main__':
     r = evaluate_model(model, X_train, X_cv, X_test, y_train, y_cv, y_test, r)
 
     # save results
-    pkl.dump(r, open(join(save_dir_unique, 'results.pkl'), 'wb'))
-    pkl.dump(model, open(join(save_dir_unique, 'model.pkl'), 'wb'))
+    joblib.dump(r, join(save_dir_unique, 'results.pkl')) # caching requires that this is called results.pkl
+    joblib.dump(model, join(save_dir_unique, 'model.pkl'))
     logging.info('Succesfully completed :)\n\n')

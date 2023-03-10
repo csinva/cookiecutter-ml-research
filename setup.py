@@ -9,6 +9,7 @@ with open(path.join(path_to_repo, 'readme.md'), encoding='utf-8') as f:
 required_pypi = [
     'numpy',
     'scikit-learn',
+    'joblib', # for saving/loading
     'pandas',
     'tqdm',
     'dict_hash', # required for caching
