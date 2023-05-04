@@ -3,7 +3,7 @@ This is an evolving repo optimized for machine-learning projects aimed at design
 # Organization
 - `project_name`: should be renamed, contains main code for modeling (e.g. model architecture)
 - `experiments`: code for runnning experiments (e.g. loading data, training models, evaluating models)
-- `scripts`: scripts for running experiments (e.g. python scripts that launch jobs in `experiments` folder with different hyperparams)
+- `scripts`: scripts for hyperparameter sweeps (python scripts that launch jobs in `experiments` folder with different hyperparams)
 - `notebooks`: jupyter notebooks for analyzing results and making figures
 - `tests`: unit tests
 
