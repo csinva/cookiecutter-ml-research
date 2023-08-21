@@ -1,4 +1,4 @@
-import submit_utils
+from imodelsx import submit_utils
 from os.path import dirname, join
 import os.path
 repo_dir = dirname(dirname(os.path.abspath(__file__)))
