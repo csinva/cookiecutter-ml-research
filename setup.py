@@ -13,7 +13,8 @@ required_pypi = [
     'pandas',
     'tqdm',
     'dict_hash', # required for caching
-
+    'imodelsx', # utilities for working with NLP
+    
     'datasets', # optional, required for getting NLP datasets
     'imodels', # optional, required for getting tabular datasets / interpretable modeling
     'pytest', # optional, required for running tests
