@@ -11,11 +11,11 @@ import joblib
 import imodels
 import inspect
 import os.path
+import imodelsx.cache_save_utils
 
 path_to_repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import project_name.model
 import project_name.data
-import cache_save_utils
 
 
 def fit_model(model, X_train, y_train, feature_names, r):
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     # set up saving directory + check for cache
-    already_cached, save_dir_unique = cache_save_utils.get_save_dir_unique(
+    already_cached, save_dir_unique = imodelsx.cache_save_utils.get_save_dir_unique(
         parser, parser_without_computational_args, args, args.save_dir
     )
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     r = defaultdict(list)
     r.update(vars(args))
     r["save_dir_unique"] = save_dir_unique
-    cache_save_utils.save_json(
+    imodelsx.cache_save_utils.save_json(
         args=args, save_dir=save_dir_unique, fname="params.json", r=r
     )
 
