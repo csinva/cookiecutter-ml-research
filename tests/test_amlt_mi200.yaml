@@ -1,0 +1,30 @@
+description: example job on MI200s
+environment:
+  image: amlt-sing/acpt-rocm5.7_ubuntu20.04_py3.10_pytorch_2.0.1
+  setup:
+    - pip install -r requirements.txt --user
+    - git clone https://github.com/csinva/imodelsX.git # can install stuff from source if you want too
+    - pip install imodelsX/
+
+code:
+  local_dir: $CONFIG_DIR
+
+target:
+  service: sing
+  name: huashanvc1
+  resource_group: gcr-singularity
+  workspace_name: msrresrchws
+
+storage:
+  output:
+    storage_account_name: chansingh
+    container_name: cs1
+    mount_dir: /mntv1 # dir on the local machine that points to your blobg
+
+# sku: 64G2-MI200-xGMI # options [64G16-MI200-IB-xGMI, 64G16-MI200-xGMI, 64G8-MI200-xGMI, 64G4-MI200-xGMI 64G2-MI200-xGMI]
+jobs:
+- name: job1
+  process_count_per_node: 1
+  sku: 64G2-MI200-xGMI
+  command:
+  - python my_file.py
