@@ -5,7 +5,8 @@ if __name__ == '__main__':
     from openai import AzureOpenAI
     api_key = os.getenv("OPENAI_API_KEY")  # need to fill this in
     client = AzureOpenAI(
-        azure_endpoint="https://healthcare-ai.openai.azure.com/",
+        # azure_endpoint="https://healthcare-ai.openai.azure.com/",
+        azure_endpoint="https://gcraoai9wus3spot.openai.azure.com/",
         api_version="2024-02-01",
         api_key=api_key,
     )
