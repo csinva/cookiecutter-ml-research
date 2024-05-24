@@ -1,18 +1,21 @@
 
+model = 'gpt-4-turbo-0125-spot'
+azure_endpoint="https://gcraoai9wus3spot.openai.azure.com/",
+# model="gpt-4",
+# azure_endpoint="https://healthcare-ai.openai.azure.com/",
 
 if __name__ == '__main__':
     import os
     from openai import AzureOpenAI
     api_key = os.getenv("OPENAI_API_KEY")  # need to fill this in
     client = AzureOpenAI(
-        # azure_endpoint="https://healthcare-ai.openai.azure.com/",
-        azure_endpoint="https://gcraoai9wus3spot.openai.azure.com/",
+        azure_endpoint=azure_endpoint,
         api_version="2024-02-01",
         api_key=api_key,
     )
 
     response = client.chat.completions.create(  # replace this value with the deployment name you chose when you deployed the associated model.
-        model="gpt-4",
+        model=model,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What is the best ice cream flavor?"}
