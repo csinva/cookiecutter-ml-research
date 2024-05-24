@@ -1,8 +1,8 @@
 
 model = 'gpt-4-turbo-0125-spot'
-azure_endpoint="https://gcraoai9wus3spot.openai.azure.com/",
+azure_endpoint = "https://gcraoai9wus3spot.openai.azure.com/"
 # model="gpt-4",
-# azure_endpoint="https://healthcare-ai.openai.azure.com/",
+# azure_endpoint="https://healthcare-ai.openai.azure.com/"
 
 if __name__ == '__main__':
     import os
