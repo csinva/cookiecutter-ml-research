@@ -1,6 +1,6 @@
 description: example job with CPUs
 environment:
-  image: amlt-sing/acpt-rocm5.7_ubuntu20.04_py3.10_pytorch_2.0.1
+  image: amlt-sing/acpt-2.2.1-py3.10-cuda12.1
   setup:
     - pip install -r requirements.txt --user
     - pip install .
