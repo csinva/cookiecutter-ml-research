@@ -1,0 +1,39 @@
+description: example job with CPUs
+environment:
+  image: amlt-sing/acpt-rocm5.7_ubuntu20.04_py3.10_pytorch_2.0.1
+  setup:
+    - pip install -r requirements.txt --user
+    - pip install .
+
+code:
+  local_dir: $CONFIG_DIR
+
+target:
+  service: sing
+  name: msrresrchvc
+  workspace_name: gcrllama2ws
+
+storage:
+  data:
+    storage_account_name: internblobdl
+    container_name: t-chansingh
+    mount_dir: /blob_data
+
+# sku options
+# equivalences: mem x C x numcpus
+# 10C3   E4ads_v5 # 30 GBs
+# 8C7    E8ads_v5 # 56 GBs
+# 8C15   E16ads_v5 # 120 GBs
+# 8C30   E32ads_v5 # 240 GBs
+# 8C60   E64ads_v5 # 480 GBs
+jobs:
+- name: run_job1
+  process_count_per_node: 1
+  sku: E32ads_v5
+  command:
+  - echo "test"
+- name: run_fmri2
+  process_count_per_node: 1
+  sku: E32ads_v5
+  command:
+  - echo "test2"
