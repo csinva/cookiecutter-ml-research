@@ -11,7 +11,7 @@ token_provider = get_bearer_token_provider(
 
 if __name__ == '__main__':
     client = AzureOpenAI(
-        api_version="2024-03-01-preview",
+        api_version="2025-01-01-preview",
         azure_endpoint="https://dl-openai-1.openai.azure.com/",
         azure_ad_token_provider=token_provider,
     )
