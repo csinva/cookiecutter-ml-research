@@ -6,7 +6,7 @@ target:
   workspace_name: chansinghws
 
 code:  
-  local_dir: /home/chansingh/cookiecutter-ml-research/amlt_example/example_mountcastle # path to your code on local machine
+  local_dir: $CONFIG_DIR/../ # path to your code on local machine
 
 environment:
   image: amlt-sing/acpt-torch2.7.0-py3.10-cuda12.6-ubuntu22.04
@@ -19,10 +19,8 @@ environment:
 
 storage:
   data:
-    # storage_account_name: mountcastlestorage
     storage_account_name: mountcastlestorage
     container_name: kalytv
-    # container_name: cs1
     mount_dir: /blob_data # path to mount the blob on the remote machine (your python files will reference data stored at this path)
 
 jobs:

@@ -6,7 +6,7 @@ target:
   workspace_name: chansinghws
 
 code:  
-  local_dir: /home/chansingh/cookiecutter-ml-research/amlt_example # path to your code on local machine
+  local_dir: $CONFIG_DIR/../ # path to your code on local machine, where $CONFIG_DIR is the directory where this config file is located
 
 environment:
   image: amlt-sing/acpt-torch2.7.0-py3.10-cuda12.6-ubuntu22.04
