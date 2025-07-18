@@ -1,0 +1,49 @@
+description: example job
+
+target:
+  service: sing
+  name: msrresrchvc
+  workspace_name: chansinghws
+
+code:  
+  local_dir: /home/chansingh/cookiecutter-ml-research/amlt_example/example_mountcastle # path to your code on local machine
+
+environment:
+  image: amlt-sing/acpt-torch2.7.0-py3.10-cuda12.6-ubuntu22.04
+  # image: amlt-sing/acpt-rocm6.1_ubuntu20.04_py3.9_pytorch2.1.2 # for amd gpus
+  setup:
+    # working directory is local_dir under code above
+    - pip install -r requirements.txt --user # install requirements from file
+    # - pip install . # install a package from the local directory
+
+
+storage:
+  data:
+    # storage_account_name: mountcastlestorage
+    storage_account_name: mountcastlestorage
+    container_name: kalytv
+    # container_name: cs1
+    mount_dir: /blob_data # path to mount the blob on the remote machine (your python files will reference data stored at this path)
+
+jobs:
+- name: job 1
+  process_count_per_node: 1
+  
+  # sku controls the compute you will use
+  # here are some common ones you may use
+
+  # cpu jobs
+  sku: 10C3  # 4 cores, 30 GBs mem
+  # sku: 8C7   # 8 cores, 56 GBs mem
+  # sku: 8C15  # 15 cores, 120 GBs mem
+  # sku: 8C30  # 30 cores, 240 GBs mem
+  # sku: 8C60  # 60 cores, 480 GBs mem
+
+  # gpu jobs
+  # sku: G1-A100
+  command:
+  # working directory is local_dir under code above, saves an example txt file into blob
+  - echo "Running!" # this is where you would run your python script
+  - echo "Succesfully tested on mountcastlestorage" > /blob_data/mountcastlestorage.txt # saves a file into the blob
+  - python example_job_script.py 
+  

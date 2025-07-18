@@ -36,4 +36,9 @@ submit_utils.run_args_list(
     args_list,
     script_name=join(repo_dir, 'experiments', '01_train_model.py'),
     actually_run=True,
+    # n_cpus=3,  # Uncomment to parallelize over cpus
+    # gpu_ids=[0, 1, 2, 3],  # Uncomment to run individual jobs over each gpu
+    # gpu_ids=[0],  # Uncomment to run all jobs on a single gpu
+    # gpu_ids=[[0, 1], [2, 3]], # Uncomment to run jobs on [0, 1] and [2, 3] gpus respectively
+    # gpu_ids=[[0, 1, 2, 3]],  # Run job on all gpus together
 )

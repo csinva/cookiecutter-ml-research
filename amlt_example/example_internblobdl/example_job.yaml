@@ -3,25 +3,24 @@ description: example job
 target:
   service: sing
   name: msrresrchvc
-  workspace_name: gcrllama2ws
+  workspace_name: chansinghws
 
 code:  
   local_dir: /home/chansingh/cookiecutter-ml-research/amlt_example # path to your code on local machine
 
 environment:
-  image: amlt-sing/acpt-2.2.2-py3.10-cuda12.1
+  image: amlt-sing/acpt-torch2.7.0-py3.10-cuda12.6-ubuntu22.04
+  # image: amlt-sing/acpt-rocm6.1_ubuntu20.04_py3.9_pytorch2.1.2 # for amd gpus
   setup:
     # working directory is local_dir under code above
     - pip install -r requirements.txt --user # install requirements from file
-    # - pip install . # install a package from the local directory
+    # - pip install . # install a package from the local directoryA
 
 
 storage:
   data:
-    # storage_account_name: internblobdl
-    # container_name: t-chansingh
-    storage_account_name: chansingh
-    container_name: cs1
+    storage_account_name: internblobdl
+    container_name: chansingh
     mount_dir: /blob_data # path to mount the blob on the remote machine
 
 jobs:
@@ -44,5 +43,4 @@ jobs:
   # working directory is local_dir under code above, saves an example txt file into blob
   - echo "Running!" # this is where you would run your python script
   - echo "Succesfully tested on cluster dec12" > /blob_data/test_cluster.txt # saves a file into the blob
-  - python example_job_script.py 
-  
+  - python example_job_script.py
