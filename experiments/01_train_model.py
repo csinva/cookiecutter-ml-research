@@ -148,6 +148,7 @@ if __name__ == "__main__":
     # set up saving dictionary + save params file
     r = defaultdict(list)
     r.update(vars(args))
+    r["git_commit_id"] = imodelsx.cache_save_utils.get_git_commit_id()
     r["save_dir_unique"] = save_dir_unique
     imodelsx.cache_save_utils.save_json(
         args=args, save_dir=save_dir_unique, fname="params.json", r=r
