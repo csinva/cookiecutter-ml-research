@@ -5,12 +5,14 @@ from azure.identity import ChainedTokenCredential, AzureCliCredential, ManagedId
 #Authenticate by trying az login first, then a managed identity, if one exists on the system)
 scope = "api://trapi/.default"
 credential = get_bearer_token_provider(ChainedTokenCredential(
-    AzureCliCredential(),
-    ManagedIdentityCredential(),
+    AzureCliCredential(), # first check local
+    ManagedIdentityCredential(), # then check managed identity (for cluster jobs)
 ), scope)
 
-api_version = '2024-12-01-preview'  # Ensure this is a valid API version see: https://learn.microsoft.com/en-us/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
+
+api_version = '2025-04-01-preview'  # Ensure this is a valid API version see: https://learn.microsoft.com/en-us/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
 deployment_name = 'gpt-4o_2024-08-06'  # Ensure this is a valid deployment name see https://aka.ms/trapi/models for the deployment name
+# deployment_name = 'o3_2025-04-16'
 instance = 'gcr/shared' # See https://aka.ms/trapi/models for the instance name
 endpoint = f'https://trapi.research.microsoft.com/{instance}'
 

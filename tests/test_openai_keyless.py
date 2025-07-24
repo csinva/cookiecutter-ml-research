@@ -18,11 +18,13 @@ if __name__ == '__main__':
 
     response = client.chat.completions.create(  # replace this value with the deployment name you chose when you deployed the associated model.
         # model='gpt-4o',
-        model='gpt-4o-mini',
+        # model='gpt-4o-mini',
+        # model='gpt-4.1',
+        model='o4-mini',
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "2+3="}
         ],
-        temperature=0,
+        # temperature=0,
     )
     print(response.choices[0].message.content)
