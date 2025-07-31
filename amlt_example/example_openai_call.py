@@ -1,40 +1,32 @@
-# Required packages
 from openai import AzureOpenAI
+import os
 from azure.identity import ChainedTokenCredential, AzureCliCredential, ManagedIdentityCredential, get_bearer_token_provider
+client_id = os.environ.get("AZURE_CLIENT_ID")
 
-#Authenticate by trying az login first, then a managed identity, if one exists on the system)
-scope = "api://trapi/.default"
+scope = "https://cognitiveservices.azure.com/.default"
 credential = get_bearer_token_provider(ChainedTokenCredential(
-    AzureCliCredential(), # first check local
-    ManagedIdentityCredential(), # then check managed identity (for cluster jobs)
+    # AzureCliCredential(), # first check local
+    ManagedIdentityCredential(client_id=client_id)
 ), scope)
 
 
-# note, should check that the deployment name is valid and matches the appropriate API version here: https://aka.ms/trapi/models
-api_version = '2024-10-21'
-deployment_name = 'gpt-4o_2024-08-06'  
-# deployment_name = 'o3_2025-04-16'
-instance = 'gcr/shared' # See https://aka.ms/trapi/models for the instance name
-endpoint = f'https://trapi.research.microsoft.com/{instance}'
 
-#Create an AzureOpenAI Client
-client = AzureOpenAI(
-    azure_endpoint=endpoint,
-    azure_ad_token_provider=credential,
-    api_version=api_version,
-)
+if __name__ == '__main__':
+    client = AzureOpenAI(
+        api_version="2025-01-01-preview",
+        azure_endpoint="https://dl-openai-1.openai.azure.com/",
+        azure_ad_token_provider=credential,
+    )
 
-#Do a chat completion and capture the response
-response = client.chat.completions.create(
-    model=deployment_name,
-    messages=[
-        {
-            "role": "user",
-            "content": "Give a one word answer, what is the capital of France?",
-        },
-    ]
-)
-
-#Parse out the message and print
-response_content = response.choices[0].message.content
-print(response_content)
+    response = client.chat.completions.create(  # replace this value with the deployment name you chose when you deployed the associated model.
+        # model='gpt-4o',
+        # model='gpt-4o-mini',
+        # model='gpt-4.1',
+        model='o4-mini',
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "2+3="}
+        ],
+        # temperature=0,
+    )
+    print(response.choices[0].message.content)

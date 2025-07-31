@@ -23,9 +23,14 @@ storage:
     container_name: chansingh
     mount_dir: /blob_data # path to mount the blob on the remote machine
 
+
 jobs:
 - name: job 1
   process_count_per_node: 1
+  identity: managed
+  submit_args:
+    env:
+      _AZUREML_SINGULARITY_JOB_UAI: /subscriptions/2cd190bb-b42a-477c-b1bb-2f20932d8dc5/resourceGroups/chansingh/providers/Microsoft.ManagedIdentity/userAssignedIdentities/chansinghid
   
   # sku controls the compute you will use
   # here are some common ones you may use

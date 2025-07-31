@@ -1,19 +1,19 @@
 from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider, AzureCliCredential
+from azure.identity import ChainedTokenCredential, AzureCliCredential, ManagedIdentityCredential, get_bearer_token_provider
 
-# azure_credential = DefaultAzureCredential()
-azure_credential = AzureCliCredential()
-token_provider = get_bearer_token_provider(
-    azure_credential,
-    "https://cognitiveservices.azure.com/.default"
-)
+scope = "https://cognitiveservices.azure.com/.default"
+credential = get_bearer_token_provider(ChainedTokenCredential(
+    AzureCliCredential(), # first check local
+    ManagedIdentityCredential(), # then check managed identity (for cluster jobs)
+), scope)
+
 
 
 if __name__ == '__main__':
     client = AzureOpenAI(
         api_version="2025-01-01-preview",
         azure_endpoint="https://dl-openai-1.openai.azure.com/",
-        azure_ad_token_provider=token_provider,
+        azure_ad_token_provider=credential,
     )
 
     response = client.chat.completions.create(  # replace this value with the deployment name you chose when you deployed the associated model.

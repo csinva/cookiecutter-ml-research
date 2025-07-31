@@ -2,7 +2,8 @@ description: example job
 
 target:
   service: sing
-  name: msrresrchvc
+  # name: msrresrchvc
+  name: msroctovc
   workspace_name: chansinghws
 
 code:  
@@ -26,19 +27,23 @@ storage:
 jobs:
 - name: job 1
   process_count_per_node: 1
+  identity: managed
+  submit_args:
+    env:
+      _AZUREML_SINGULARITY_JOB_UAI: /subscriptions/2cd190bb-b42a-477c-b1bb-2f20932d8dc5/resourceGroups/chansingh/providers/Microsoft.ManagedIdentity/userAssignedIdentities/chansinghid
   
   # sku controls the compute you will use
   # here are some common ones you may use
 
   # cpu jobs
-  sku: 10C3  # 4 cores, 30 GBs mem
+  # sku: 10C3  # 4 cores, 30 GBs mem
   # sku: 8C7   # 8 cores, 56 GBs mem
   # sku: 8C15  # 15 cores, 120 GBs mem
   # sku: 8C30  # 30 cores, 240 GBs mem
   # sku: 8C60  # 60 cores, 480 GBs mem
 
   # gpu jobs
-  # sku: G1-A100
+  sku: G1-A100
   command:
   # working directory is local_dir under code above, saves an example txt file into blob
   - echo "Running!" # this is where you would run your python script
