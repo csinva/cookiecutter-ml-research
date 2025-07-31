@@ -2,8 +2,8 @@ description: example job
 
 target:
   service: sing
-  name: msroctovc
-  # name: msrresrchvc
+  # name: msroctovc
+  name: msrresrchvc
   workspace_name: chansinghws
 
 code:  
@@ -22,10 +22,10 @@ environment:
 
 storage:
   data:
-    # storage_account_name: chansingh
-    # container_name: cs1
+    storage_account_name: chansingh
+    container_name: cs1
     mount_dir: /blob_data # path to mount the blob on the remote machine
-    datastore_name: chansingh_datastore
+    # datastore_name: chansingh_datastore
 
 jobs:
 - name: job 1
