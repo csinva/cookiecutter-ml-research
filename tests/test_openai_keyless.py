@@ -12,7 +12,8 @@ credential = get_bearer_token_provider(ChainedTokenCredential(
 if __name__ == '__main__':
     client = AzureOpenAI(
         api_version="2025-01-01-preview",
-        azure_endpoint="https://dl-openai-1.openai.azure.com/",
+        # azure_endpoint="https://dl-openai-1.openai.azure.com/",
+        azure_endpoint="https://dl-openai-3.openai.azure.com/",
         azure_ad_token_provider=credential,
     )
 
@@ -20,7 +21,7 @@ if __name__ == '__main__':
         # model='gpt-4o',
         # model='gpt-4o-mini',
         # model='gpt-4.1',
-        model='o4-mini',
+        model='gpt-5-chat', #o4-mini',
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "2+3="}
