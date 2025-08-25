@@ -21,11 +21,12 @@ if __name__ == '__main__':
         # model='gpt-4o',
         # model='gpt-4o-mini',
         # model='gpt-4.1',
-        model='gpt-5-chat', #o4-mini',
+        model='gpt-5', #o4-mini',
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "2+3="}
         ],
+        reasoning_effort='low',
         # temperature=0,
     )
     print(response.choices[0].message.content)
