@@ -14,8 +14,8 @@ import os.path
 import imodelsx.cache_save_utils
 
 path_to_repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import project_name.model
-import project_name.data
+import src.model
+import src.data
 
 
 def fit_model(model, X_train, y_train, feature_names, r):
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     # torch.manual_seed(args.seed)
 
     # load text data
-    dset, dataset_key_text = project_name.data.load_huggingface_dataset(
+    dset, dataset_key_text = src.data.load_huggingface_dataset(
         dataset_name=args.dataset_name, subsample_frac=args.subsample_frac
     )
     (
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         y_train,
         y_test,
         feature_names,
-    ) = project_name.data.convert_text_data_to_counts_array(dset, dataset_key_text)
+    ) = src.data.convert_text_data_to_counts_array(dset, dataset_key_text)
 
     # load tabular data
     # https://csinva.io/imodels/util/data_util.html#imodels.util.data_util.get_clean_dataset
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     )
 
     # load model
-    model = project_name.model.get_model(args)
+    model = src.model.get_model(args)
 
     # set up saving dictionary + save params file
     r = defaultdict(list)

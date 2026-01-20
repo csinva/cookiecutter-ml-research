@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neuro"
+version = "0.1.0"
+description = "Template for project"
+readme = "readme.md"
+requires-python = ">=3.12"
+authors = [
+    {name = "Microsoft Research"},
+]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "azure-identity>=1.24.0",
+    "imodelsx",
+    "amlt>=10.16.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "seaborn",
+    "dvu",
+    "jupyter",
+    "ipython",
+]
+
+[tool.uv.sources]
+imodelsx = { path = "../imodelsX", editable = true }
+amlt = { index = "msr" }
+
+[[tool.uv.index]]
+name = "msr"
+url = "https://msrpypi.azurewebsites.net/stable/leloojoo"
+
+
+[tool.setuptools.packages.find]
+include = ["src*"]
