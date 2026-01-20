@@ -3074,38 +3074,6 @@ wheels = [
 ]
 
 [[package]]
-name = "neuro"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "amlt" },
-    { name = "azure-identity" },
-    { name = "imodelsx" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "dvu" },
-    { name = "ipython" },
-    { name = "jupyter" },
-    { name = "pytest" },
-    { name = "seaborn" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "amlt", specifier = ">=10.16.5", index = "https://msrpypi.azurewebsites.net/stable/leloojoo" },
-    { name = "azure-identity", specifier = ">=1.24.0" },
-    { name = "dvu", marker = "extra == 'dev'" },
-    { name = "imodelsx", editable = "../imodelsX" },
-    { name = "ipython", marker = "extra == 'dev'" },
-    { name = "jupyter", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'dev'" },
-    { name = "seaborn", marker = "extra == 'dev'" },
-]
-provides-extras = ["dev"]
-
-[[package]]
 name = "notebook"
 version = "7.5.2"
 source = { registry = "https://msrpypi.azurewebsites.net/stable/leloojoo" }
@@ -5158,6 +5126,38 @@ sdist = { url = "https://files.pythonhosted.org/packages/67/3d/926db774c9c98acf6
 wheels = [
     { url = "https://files.pythonhosted.org/packages/33/78/d1a1a026ef3af911159398c939b1509d5c36fe524c7b644f34a5146c4e16/spacy_loggers-1.0.5-py3-none-any.whl", hash = "sha256:196284c9c446cc0cdb944005384270d775fdeaf4f494d8e269466cfa497ef645", size = 22343, upload-time = "2023-09-11T12:26:50.586Z" },
 ]
+
+[[package]]
+name = "src"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "amlt" },
+    { name = "azure-identity" },
+    { name = "imodelsx" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "dvu" },
+    { name = "ipython" },
+    { name = "jupyter" },
+    { name = "pytest" },
+    { name = "seaborn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "amlt", specifier = ">=10.16.5", index = "https://msrpypi.azurewebsites.net/stable/leloojoo" },
+    { name = "azure-identity", specifier = ">=1.24.0" },
+    { name = "dvu", marker = "extra == 'dev'" },
+    { name = "imodelsx", editable = "../imodelsX" },
+    { name = "ipython", marker = "extra == 'dev'" },
+    { name = "jupyter", marker = "extra == 'dev'" },
+    { name = "pytest", marker = "extra == 'dev'" },
+    { name = "seaborn", marker = "extra == 'dev'" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "srsly"
