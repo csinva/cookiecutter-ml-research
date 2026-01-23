@@ -10,8 +10,8 @@ code:
   local_dir: $CONFIG_DIR/../ # path to your code on local machine, where $CONFIG_DIR is the directory where this config file is located
 
 environment:
-  image: amlt-sing/pytorch
-  # image: amlt-sing/acpt-torch2.7.1-py3.10-cuda12.6-ubuntu22.04
+  # image: amlt-sing/pytorch
+  image: amlt-sing/acpt-torch2.7.1-py3.10-cuda12.6-ubuntu22.04
   # image: amlt-sing/acpt-rocm6.1_ubuntu20.04_py3.9_pytorch2.1.2 # for amd gpus
   setup:
     # working directory is local_dir under code above
